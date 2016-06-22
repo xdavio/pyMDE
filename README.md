@@ -2,4 +2,4 @@
 
 ## Installation
 
-  pip install https://github.com/xdavio/pyMDE/archive/master.zip
+    pip install https://github.com/xdavio/pyMDE/archive/master.zip
