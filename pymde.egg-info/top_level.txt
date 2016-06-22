@@ -1,6 +1,0 @@
-disparity
-est
-estPois
-gen
-plot
-utils
