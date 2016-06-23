@@ -25,18 +25,16 @@ class RAF():
 
 class Cfun():
     """ This is the object which is minimized according to standard disparity theory. """
-    def __init__(self, d, th = .3, usePois = False):
+    def __init__(self, d, th = .3, likelihood = None):
         self.k = 100 #support
         self.th = th #initial guess of theta
         self.d = d #data
         self.overflow = .001
-        if usePois == True:
-            self.modellikelihood = poismodel
-            self.usePois = True
-        else:
+        if likelihood is None:
             self.modellikelihood = modellikelihood
-            self.usePois = False
-
+        else:
+            self.modellikelihood = likelihood
+        
     def resid(self, th, overflowprotect = True):
         """
         Pearson residual
@@ -63,19 +61,14 @@ class Cfun():
         distance = self._cfun(d)
         return(distance)
 
-    
     def rho(self, th):
         return(np.array(self.cfun(th)) * self.modellikelihood(self.k, th))
 
     def obj(self, th):
         return(np.sum(self.rho(th)))
 
-    def mde(self):
-        if not self.usePois:
-            out = minimize_scalar(fun = self.obj, bounds = (0,1), method = "Bounded")
-        else:
-            #50 is the arbitray upper bound of the poisson parameter estimation.
-            out = minimize_scalar(fun = self.obj, bounds = (0,50), method = "Bounded")
+    def mde(self, lower = 0, upper = 1):
+        out = minimize_scalar(fun = self.obj, bounds = (lower,upper), method = "Bounded")
         return(out.x)
 
 
@@ -119,17 +112,12 @@ class PD(Cfun):
     def _cfun(self, d, pd_la = 1):
         return (np.power(d + 1, pd_la + 1) - (d +1))/(pd_la * (pd_la + 1)) - d / (pd_la + 1)
 
-def mde(d, clss, pois = False):
+def mde(d, clss, likelihood = None, bounds = (0,1)):
     """
     Takes class pointer clss and dataset d and returns the MDE for that class
     """
-    ## if pois == False:
-    ##     a = clss(d, pois)
-    ## else:
-    ##     #in this case, pois = True
-    ##     a = clss(d, pois)
-    a = clss(d, pois)
-    return(a.mde())
+    a = clss(d, .3, likelihood)
+    return(a.mde(*bounds))
 
 
 if __name__ == "main":
