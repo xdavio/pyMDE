@@ -6,7 +6,10 @@ def plot_c(func, id, leftlim = -1.0, rightlim = 5.0):
     ax = plt.subplot(id)
     
     t = np.arange(leftlim, rightlim, 0.01)
-    s = func(t)
+    try:
+        s = func(t)
+    except:
+        s = [func(x) for x in t]
     line, = plt.plot(t, s, lw=2)
     
     plt.show()

@@ -1,4 +1,4 @@
-import numpy as np
+#import numpy as np
 from scipy.optimize import minimize_scalar
 from scipy.stats import norm
 
@@ -9,19 +9,20 @@ from estPois import modellikelihood as poismodel
 
 from utils import unbound_access
 
-#only used in the function A
-from sympy import Symbol, lambdify
+import autograd.numpy as np
+from autograd import grad
+
 
 class RAF():
     def __init__(self, cfun):
         self.cfun = cfun
-        d = Symbol('d')
-        C = cfun(d)
-        self.Cprime = lambdify(d, C.diff(d), 'numpy')
-
+        self.Cprime = grad(cfun)
+        
+        
     def eval(self, x):
         return self.Cprime(x) * (1 + x) - self.cfun(x)
 
+    
 
 class Cfun():
     """ This is the object which is minimized according to standard disparity theory. """
