@@ -80,6 +80,26 @@ class Cfun():
         out = minimize_scalar(fun = self.obj, bounds = (lower,upper), method = "Bounded")
         return(out.x)
 
+    def ee(self, th):
+        """
+        gives the value of the estimating equation for a proposed value of theta
+        """
+        cprime = grad(self._cfun) #function
+        A = lambda x: cprime(x) * (1 + x) - self._cfun(x)
+        d = self.resid(th) #delta
+        A_support =  [A(x) for x in d]
+
+        like_by_x = {}
+        grad_like_by_x = {}
+        grad_values = []
+        for x in range(self.k):
+            like_by_x[x] = lambda y: self.modellikelihood(self.k, y)[x]
+            grad_like_by_x[x] = grad(like_by_x[x])
+            grad_values.append(grad_like_by_x[x](th))
+
+        return sum([x * y for x,y in zip(A_support, grad_values)])
+        
+
 
 class LD(Cfun):
     @unbound_access
