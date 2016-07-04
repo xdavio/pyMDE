@@ -72,27 +72,11 @@ def amlsd(th):
     return np.power((th * np.power( 1 - th, 2) / 2), .5)
 
 
-## def mhdesd(th):    
-##     def mhdeasvar(th):
-##         def mhdeasvarnum(th):
-##             def den(x):
-##                 return np.power(th,(x-1)) * (1-th)            
-##             X = np.arange(1,mhdesupport + 1)
-##             mu = 1. / (1 - th)
-##             return mu * np.sum(  np.power( (X-1)/th - 1./(1-th), 2) / X * den(X) )        
-##         f = mhdeasvarnum(th)
-##         information = 1./(th*np.power(1-th,2)) #information of fth not fth,app
-##         return f/np.power(information, 2)    
-##     return np.power(mhdeasvar(th), .5)
-
 def mhdesd(th):
     #for geometri, mhdesd is the same as ammsd
     return ammsd(th)
 
+
 def pmhdesd(th):
     #for geometric, mhdesd is the same as ammsd
     return 0
-
-
-
-

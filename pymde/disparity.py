@@ -15,13 +15,21 @@ from autograd import grad
 
 class RAF():
     def __init__(self, cfun):
-        self.cfun = cfun
-        self.Cprime = grad(cfun)
+        if isinstance(cfun, Cfun):
+            self.cfun = cfun._cfun
+        else:
+            self.cfun = cfun
+        self.Cprime = grad(self.cfun)
         
         
     def eval(self, x):
         return self.Cprime(x) * (1 + x) - self.cfun(x)
 
+class RAF_C(RAF):
+    def __init__(self, Cfun_inst):
+        """
+        this RAF class takes an instance of a CFUN instead of the class
+        """
     
 
 class Cfun():
